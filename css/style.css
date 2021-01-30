@@ -1,0 +1,62 @@
+@charset "utf-8";
+/* user font import */
+@import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
+
+/* reset - menu, margin, padding ..*/
+* {margin: 0; padding: 0;}
+li {list-style:none;}
+a {color:inherit; text-decoration: none;}
+
+
+/* layout */
+body {
+    font-family: 'Yusei Magic', sans-serif;
+    font-size: 16x;
+    color:#333;
+    line-height: 1.25;
+}
+
+header{
+    width:100%;
+    height: 100px;
+    position: relative;
+}
+
+.inner-header .util ul {
+    width: 150;
+    height: 100%;
+    float: left;
+    line-height: 100px;
+    margin-left: 2%;
+}
+
+.inner-header .util ul li {
+    float : left;
+    padding: 0 5px;
+}
+.inner-header .logo {
+    width: 270px;
+    line-height: 100px;
+    position: absolute;
+    left:50%;
+    transform: translateX(-50%);
+}
+
+.inner-header .logo a {
+    display: block;
+    width: 100%; 
+    height: 100%;
+}
+
+.menu {
+    width:350px;
+    float:right;
+}
+
+.menu a {
+    display:block;
+    float:left;
+    margin-top: 23px;
+    padding : 10px 20px;
+    border: 1px solid #ddd
+}
