@@ -27,6 +27,10 @@ export default class Minefield{
         }
     }
 
+    squareAt(row, col){
+        // TODO: go find the square at row, col and return it
+    }
+
     _randomizeMines(){
         // TODO : for each mine, randomize row, col
 

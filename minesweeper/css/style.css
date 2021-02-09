@@ -2,6 +2,19 @@ td {
     width : 2em;
     height: 2em;
     background-color: gray;
-    border: 1px solid;
+    border: 1px solid white;
     margin:  1px;
+}
+
+.button {
+    width : 5em;
+    background-color: grey;
+    border-left: 3px solid lightgray;
+    border-top: 3px solid lightgray;
+    border-right: 4px solid #555;
+    border-bottom: 4px solid #555;
+}
+
+.testClicked {
+    background-color: red;
 }
