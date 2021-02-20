@@ -2,71 +2,114 @@
 'use strict';
 
 import Minefield from "./Minefield.js";
+import AudioManager from "./AudioManager.js";
 
 
-const DEFAULT_SIZE = 12;
-const MINECOUNT = 10;
+const MAP_SIZE = 12;
+const MINE_COUNT = 10;
 
 export default class Game {
 
-    constructor( size = DEFAULT_SIZE) {
+    constructor( size = MAP_SIZE) {
         // Create a game
         this.board = {
             size: size,
         };
-        this.minefield = new Minefield(size, MINECOUNT);
+        this.minefield = new Minefield(size, MAP_SIZE);
+        this.mineCount = MINE_COUNT;
+
         this.gameOver = false;
+
+        this.audioManager = new AudioManager();
+
 
         this.message = "Welcome to Minesweeper";
         let self = this;
-        document.querySelector("#test-button")
-            .addEventListener('click', event => {
-                document.querySelector('#demo')
-                    .innerHTML = self.message;
-            });
-        // document.querySelector("#test-button")
-        //     .addEventListener('click', event => this.someLonghandler(event));
-        this.generateBoard();
-        this.updateCellHander();
+        //$("#restart-button").on('click', event => this.someLonghandler(event));
+        document.querySelector("#restart-button")
+            .addEventListener('click', event => this.someLonghandler(event));
+        this._generateBoard();
+        this._updateCellHandlers();
 
     }
-    updateCellHander() {
-        document.querySelectorAll(".square")
-            .forEach(element =>  {
-            element.addEventListener('click', event => {
-                // TODO:  handle the user clicking one of the game map squares
-                // TODO: find the thing 1 clicked, so something to it
-                const id = event.target.id;
 
-                const classList = event.target.classList.add("hide");
-                // TODO: check if there is a mine here
-                // TODO: If mine BOOM!! Game Over
+    get MAP_SIZE() { return MAP_SIZE }
+    get MINE_COUNT() {return MINE_COUNT}
 
-                // If no mine are there adjacent mines? if so show the count
-                // ELSE clear all non adjacent mine squares (0 adjcent)
-                let assert = true;
-            })
+    _updateCellHandlers() {
+
+        // TODO:  handle the user clicking one of the game map squares
+        // TODO: find the thing 1 clicked, so something to it
+        $(".square").on('click', event => {
+            const $theEl = $(event.target);
+            const id = $theEl.attr("id");
+
+            //$theEl.addClass("show-indicator")
+
+            // TODO: check if there is a mine here
+            //  const row = $theEl.data("row");
+            //  const col = $theEl.data("col");
+            // TODO: If mine BOOM!! Game Over
+
+            // TODO : If no mine are there adjacent mines? if so show the count
+            // TODO: ELSE clear all non adjacent mine squares (0 adjcent)
+            if (!(this.CheckFlag($theEl))) {
+
+                const row = $theEl.data("row");
+                const col = $theEl.data("col");
+                //console.log('Clicked cell at ' + row + ", " + col);
+                const selectedSquare = this.minefield.squareAt(row, col);
+                // Check if mine is here (Debugging)
+
+                //if isn't revealed
+                if (!(selectedSquare.isRevealed())) {
+                    this._reveal(selectedSquare, $theEl);
+                }
+            }
+
+
+        });
+        //right Click
+        $(".square").on('contextmenu', event => {
+            event.preventDefault();
+            // TODO : what happens on the right click...
+            //square.innerHTML = ' 🚩'
         })
     }
 
-
+    CheckFlag($theE1) {
+        if ($theE1.hasClass("flag-cell")) {
+            return true;
+        }
+    }
 
     // someLongHandler(event) {
     //         document.querySelector('#demo')
     //                  .innerHTML = this.message;
     // }
-
+    someLonghandler(event){
+        //$("demo").html(this.message)
+        document.querySelector('#demo')
+            .innerHTML = this.message;
+        //Flag for restart or new game
+        //console.log("someLonghandler")
+        this.newgame = true;
+        this.run();
+    }
     run() {
 
-        while (!this.gameOver) {
+        // while (!this.gameOver) {
+        //
+        //     this.update();
+        //     this.render();
+        // }
+        this.gameOver = false;
+        this.render()
 
-            this.update();
-            this.render();
-        }
     }
 
     update() {
-        //this.updateCellHander();
+        //this.updateCellHanders();
         // get user input and update the game simulation
         this.gameOver = true;
     }
@@ -74,25 +117,31 @@ export default class Game {
     render() {
         // change the DOM and the screen to show the player what's going on
 
-        // generate the playfield
-        //this.generateBoard();
+        this.minefield = new Minefield(this.board.size, this.minecount);
+        this._generateBoard();
+        this._updateCellHandlers();
+        //Discriminate between a new game or a restart
 
     }
 
-    generateBoard() {
+    _generateBoard() {
         /*
         <table>
             <tr><td></td>...</tr>...
         </table>
         */
         let markup = "<table>";
-        for (let row = 0; row < DEFAULT_SIZE; row++) {
+        for (let row = 0; row < MAP_SIZE; row++) {
 
             markup += "<tr>";
-            for (let col = 0; col < DEFAULT_SIZE; col++ ) {
+            for (let col = 0; col < MAP_SIZE; col++ ) {
 
-                const id = 'square-${row}-${col}'; // "square-4-5"
-                markup += '<td id="${id}" class="square"><div class="unknown"></div></td>';
+                 //const id = square-${row}-${col};
+                 //markup += '<td><div id="${id}" class="unknown"></div></td>';
+                const id = `square-${row}-${col}` ; // "square-4-5"
+                const dataAttributes = `data-row="${row}" data-col="${col}"`
+                markup += `<td id="${id}" class="square" ${dataAttributes} ><div class="unknown"></div></td>`;
+                //markup += `<td class= "square" ><button class="unknown" ${dataAttributes} id=${id}><!--c1r1--></button></td>`;
             }
             markup += "</tr>";
         }
@@ -100,6 +149,64 @@ export default class Game {
         markup += "</table>";
 
         // find the game area, attach this table
-        document.querySelector("#game-screen").innerHTML = markup;
+        // document.querySelector("#game-screen").innerHTML = markup;
+        $("#game-screen").html(markup);
+    }
+
+    _flag($el)
+    {
+
+    }
+    _reveal($el)
+    {
+        // const row =;
+        // const col = ;
+        // const sq = this.minefield.squareAt()
+        //Get the square corresponding to this element
+        // TODO : If no mine are there adjacent mines? is so show the count
+        // TODO : Else clear all
+    }
+
+    // TODO: This method really should live in the Square class as style();
+    _styleSquare( theSquare ) {
+
+        let classes = "square";
+        let inner = "";
+
+        // Is the square flagged?
+        if (theSquare.isFlagged) {
+
+            classes += " flag";
+        }
+        // Is the square revealed?
+        else if ((theSquare.isRevealed) || DEBUG) {
+
+            // Is there a mine or some count.
+            if (DEBUG) {
+                classes += " debug";
+            }
+
+            // value = ( condition ? result_if_true : result_if_false );
+            classes += ( theSquare.hasMine ? " mine" : ` revealed color-${theSquare.adjacent}`);
+            inner = `${theSquare.adjacent}`;
+        }
+
+        /**
+         Methods can return intrinsic objects, these can be made at any time
+         let myReturnThing = {}
+
+         and we can add name:value pairs.
+         let myReturnThing = {
+            classes: classes,
+            inner: inner
+        }
+
+         As a shortcut whenever we create an object where the attribute name is the same as
+         the variable that contains the value, we can shorten the name:value pair to just the name
+         */
+        return {
+            classes,
+            inner
+        }
     }
 }

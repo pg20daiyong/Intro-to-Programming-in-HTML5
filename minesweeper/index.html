@@ -6,7 +6,8 @@
         <link rel="stylesheet" type="text/css" href="./css/style.css">
         <link rel="stylesheet" type="text/css" href="./css/style_base.css">
         <!-- Scripts here are external libs -->
-        <script></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="scripts/libs/buzz.min.js"></script>
     </head>
     <body> 
         <section id="app-wrapper">
@@ -14,7 +15,7 @@
                 <!-- Kewards, win loss, play again-->
 
             </section>
-            <section id="game-screen">
+            <section id="game-screen" class="hide">
                 <!-- The actual game -->
                 <!-- Auto generated in script -->
             </section>
@@ -24,12 +25,14 @@
                 <div id="main-splash-image"></div>
                 <div id="play-now-btn"></div>
 
-                <div id="test-button" class="button">Press Me</div>
+                <div id="restart-button" class="button">Reset</div>
 
                 <div id="demo">Test Area</div>
             </section>
         </section>
 
         <script type="module" src="scripts/index.js"></script>
+<!--        <script type="text/javascript" src="scripts/index.js"></script>-->
     </body>
+
 </html>

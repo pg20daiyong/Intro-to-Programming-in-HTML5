@@ -4,5 +4,9 @@
 import Game from './Game.js';
 
 // MAIN Application
-let game = new Game();
-game.run();
+$(document).ready(event=> {
+    let game = new Game();
+//let game = new Game.DEFAULT_SIZE;
+    const size = Game.MAP_SIZE;
+    game.run();
+});

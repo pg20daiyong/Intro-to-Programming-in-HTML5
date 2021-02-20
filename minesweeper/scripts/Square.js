@@ -2,14 +2,36 @@
 'use strict'
 
 export default class Square {
-    constructor() {
+    constructor(mine = false) {
         this._hasMine = false;
-        this.adjacentMines = 0;
+        this._adjacentMines = 0;
         //this.location
-        this.mine = null; //new Mine();
+        this.mine = mine; //new Mine();
+        this.revealed = false;
     }
 
     get hasMine() {
-        return this._hasMine
+        return this._hasMine;
+    }
+    get numOfAdjacentMines() {
+        return this.adjacentMines;
+    }
+    Reveal() {
+        this.revealed = true;
+    }
+
+    isRevealed() {
+        return this.revealed;
+    }
+
+    addMine() {
+        this._hasMine = true;
+    }
+
+    hasAdjacent() {
+        if (this.adjacentMines > 0) {
+            return true;
+        }
+        return false;
     }
 }
