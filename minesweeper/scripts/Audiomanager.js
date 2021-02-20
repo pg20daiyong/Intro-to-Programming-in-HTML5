@@ -11,5 +11,6 @@ export default class AudioManager {
         }
 
         this.backgroundSound = new buzz.sound("../sounds/background", config);
+        this.explosion = new buzz.sound("../sounds/explosion", config);
     }
 }

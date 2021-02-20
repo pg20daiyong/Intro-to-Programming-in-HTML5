@@ -57,12 +57,13 @@ export default class Game {
 
                 const row = $theEl.data("row");
                 const col = $theEl.data("col");
-                //console.log('Clicked cell at ' + row + ", " + col);
+                console.log('Clicked cell at ' + row + ", " + col);
                 const selectedSquare = this.minefield.squareAt(row, col);
                 // Check if mine is here (Debugging)
 
                 //if isn't revealed
-                if (!(selectedSquare.isRevealed())) {
+                if (!(selectedSquare.isRevealed)) {
+                    //console.log(selectedSquare)
                     this._reveal(selectedSquare, $theEl);
                 }
             }
@@ -70,18 +71,34 @@ export default class Game {
 
         });
         //right Click
-        $(".square").on('contextmenu', event => {
+        $(".square").on("contextmenu", event => {
             event.preventDefault();
             // TODO : what happens on the right click...
-            //square.innerHTML = ' 🚩'
-        })
+            const $theEl = $(event.target);
+            const id = $theEl.attr("id");
+
+            if (this.CheckFlag($theEl)) {
+                //Check the size to remove and add the right classes
+
+                $theEl.addClass("unknown");
+                $theEl.removeClass("flag");
+                return;
+            } else {
+                $theEl.removeClass("unknown");
+                $theEl.addClass("flag");
+                return;
+            }
+
+        });
     }
 
-    CheckFlag($theE1) {
-        if ($theE1.hasClass("flag-cell")) {
+    // if flag or not
+    CheckFlag($theEl) {
+        if ($theEl.hasClass("flag")) {
             return true;
         }
     }
+
 
     // someLongHandler(event) {
     //         document.querySelector('#demo')
@@ -157,16 +174,60 @@ export default class Game {
     {
 
     }
-    _reveal($el)
-    {
+    _reveal(selectedSquare, $theEl) {
+
+        //Reveal the contents of the cell
         // const row =;
         // const col = ;
         // const sq = this.minefield.squareAt()
         //Get the square corresponding to this element
         // TODO : If no mine are there adjacent mines? is so show the count
         // TODO : Else clear all
+        console.log(selectedSquare)
+        if (selectedSquare.hasMine) {
+            //Check the size to remove the right classes
+            $theEl.removeClass("unknown");
+            $theEl.addClass("mine");
+
+            //sound effect: Explosion
+            this.MineExplosion();
+            this.gameOver = true;
+            return;
+        }
+        //ADD hasAdjacent method
+        if (selectedSquare.hasAdjacent()) {
+            //Are there adjacent mines? if so, show count
+            const count = selectedSquare.adjacentMines;
+            console.log(count);
+            const $innerDiv = $("<div" + selectedSquare.adjacentMines + "</div>");
+
+        }
+
+        selectedSquare.Revealed();
+        this._SquareReveal(selectedSquare);
+        $theEl.removeClass("unknown");
+        $theEl.addClass(this._SquareReveal(selectedSquare));
+        $theEl.append(`${selectedSquare.adjacentMines}`);
+
+
+        //if no adjacent mines, clear squares until mines are found (adjmines > 0)
+        //TODO: DFS to clear
     }
 
+    MineExplosion(){
+        this.audioManager.explosion.play();
+    }
+
+    _SquareReveal(theSquare) {
+        let classes = "revealed-cell";
+        //Square revealed?
+        if (theSquare.isRevealed) {
+            //Ternary operator value = (Condition ? result_iftrue : result_ifnot);
+            classes += (theSquare.hasMine ? "" : ` color-${theSquare.adj}`);
+        }
+
+        return classes;
+    }
     // TODO: This method really should live in the Square class as style();
     _styleSquare( theSquare ) {
 

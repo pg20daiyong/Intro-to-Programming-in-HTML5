@@ -20,6 +20,12 @@ export default class Minefield{
     }
     get SIZE() { return this.size }
 
+    squareAt(row, col){
+        // TODO: go find the square at row, col and return it
+        //Look for square
+        return this.field[row][col];
+    }
+
     _init(){
         // create 2D array of squares
         for(let i=0; i<this.size; i++){
@@ -29,17 +35,6 @@ export default class Minefield{
             }
         }
         //console.log(this.field)
-    }
-
-    squareAt(row, col){
-        // TODO: go find the square at row, col and return it
-        // if(this.field[row][col]._hasMine === true){
-        //     return 9;
-        // } else {
-        //     return this.field[row][col]._adjacentMines
-        // }
-        //console.log(this.field[1][1])
-        return this.field[row][col];
     }
 
     _randomizeMines(mineCount){
@@ -55,6 +50,7 @@ export default class Minefield{
             //console.log(j)
             if(this.field[i][j]._hasMine === false) { //if there is no mine, it changes to true and increase checkCount
                 this.field[i][j]._hasMine = true
+                this.field[i][j].mine = true
                 checkCount++
                 //console.log(this.field[i][j])
             }
@@ -70,7 +66,7 @@ export default class Minefield{
             if (this.field[0][1]._hasMine === true) count++
             if (this.field[1][0]._hasMine === true) count++
             if (this.field[1][1]._hasMine === true) count++
-            this.field[0][0]._adjacentMines = count
+            this.field[0][0].adjacentMines = count
         }
         // center top Edge
         for(let j=1; j<this.size-1; j++) {
@@ -80,7 +76,7 @@ export default class Minefield{
             if(this.field[1][j-1]._hasMine === true) count++
             if(this.field[1][j]._hasMine === true) count++
             if(this.field[1][j+1]._hasMine === true) count++
-            this.field[0][j]._adjacentMines = count
+            this.field[0][j].adjacentMines = count
         }
         // Right Top Corner
         {
@@ -88,7 +84,7 @@ export default class Minefield{
             if (this.field[0][this.size-2]._hasMine === true) count++
             if (this.field[1][this.size-2]._hasMine === true) count++
             if (this.field[1][this.size-1]._hasMine === true) count++
-            this.field[0][this.size-1]._adjacentMines = count
+            this.field[0][this.size-1].adjacentMines = count
         }
         // Left Center Edge
         for(let i=1; i<this.size-1; i++) {
@@ -98,7 +94,7 @@ export default class Minefield{
             if(this.field[i][1]._hasMine === true) count++
             if(this.field[i+1][0]._hasMine === true) count++
             if(this.field[i+1][1]._hasMine === true) count++
-            this.field[i][0]._adjacentMines = count
+            this.field[i][0].adjacentMines = count
         }
 
         // Left Bottom Corner
@@ -107,7 +103,7 @@ export default class Minefield{
             if (this.field[this.size-2][0]._hasMine === true) count++
             if (this.field[this.size-2][1]._hasMine === true) count++
             if (this.field[this.size-1][1]._hasMine === true) count++
-            this.field[this.size-1][0]._adjacentMines = count
+            this.field[this.size-1][0].adjacentMines = count
         }
 
 
@@ -120,7 +116,7 @@ export default class Minefield{
                 if(this.field[i][this.size-2]._hasMine === true) count++
                 if(this.field[i+1][this.size-1]._hasMine === true) count++
                 if(this.field[i+1][this.size-2]._hasMine === true) count++
-                this.field[i][this.size-1]._adjacentMines = count
+                this.field[i][this.size-1].adjacentMines = count
             }
         }
 
@@ -132,7 +128,7 @@ export default class Minefield{
             if(this.field[this.size-2][j+1]._hasMine === true) count++
             if(this.field[this.size-1][j-1]._hasMine === true) count++
             if(this.field[this.size-1][j+1]._hasMine === true) count++
-            this.field[this.size-1][j]._adjacentMines = count
+            this.field[this.size-1][j].adjacentMines = count
         }
 
         // Right Bottom Edge
@@ -141,7 +137,7 @@ export default class Minefield{
             if (this.field[this.size-2][this.size-1]._hasMine === true) count++
             if (this.field[this.size-2][this.size-2]._hasMine === true) count++
             if (this.field[this.size-1][this.size-2]._hasMine === true) count++
-            this.field[this.size-1][this.size-1]._adjacentMines = count
+            this.field[this.size-1][this.size-1].adjacentMines = count
         }
 
         // inside
@@ -158,7 +154,7 @@ export default class Minefield{
                 if(this.field[i+1][j-1]._hasMine === true) count++
                 if(this.field[i+1][j]._hasMine === true) count++
                 if(this.field[i+1][j+1]._hasMine === true) count++
-                this.field[i][j]._adjacentMines = count
+                this.field[i][j].adjacentMines = count
 
             }
         }

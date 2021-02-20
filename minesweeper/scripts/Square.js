@@ -4,10 +4,10 @@
 export default class Square {
     constructor(mine = false) {
         this._hasMine = false;
-        this._adjacentMines = 0;
+        this.adjacentMines = 0;
         //this.location
         this.mine = mine; //new Mine();
-        this.revealed = false;
+        this.isRevealed = false;
     }
 
     get hasMine() {
@@ -16,12 +16,12 @@ export default class Square {
     get numOfAdjacentMines() {
         return this.adjacentMines;
     }
-    Reveal() {
-        this.revealed = true;
+    Revealed() {
+        this.isRevealed = true;
     }
 
     isRevealed() {
-        return this.revealed;
+        return this.isRevealed;
     }
 
     addMine() {
