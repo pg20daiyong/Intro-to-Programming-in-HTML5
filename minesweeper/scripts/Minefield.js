@@ -23,6 +23,7 @@ export default class Minefield{
     squareAt(row, col){
         // TODO: go find the square at row, col and return it
         //Look for square
+        console.log('Clicked cell at ' + row + ", " + col);
         return this.field[row][col];
     }
 

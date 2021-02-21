@@ -6,7 +6,7 @@ import AudioManager from "./AudioManager.js";
 
 
 const MAP_SIZE = 12;
-const MINE_COUNT = 10;
+const MINE_COUNT = 20;
 
 export default class Game {
 
@@ -58,6 +58,8 @@ export default class Game {
                 const row = $theEl.data("row");
                 const col = $theEl.data("col");
                 console.log('Clicked cell at ' + row + ", " + col);
+                // if(row >= MAP_SIZE || col >= MAP_SIZE)
+                //     return;
                 const selectedSquare = this.minefield.squareAt(row, col);
                 // Check if mine is here (Debugging)
 
@@ -187,7 +189,7 @@ export default class Game {
         if (selectedSquare.hasMine) {
             //Check the size to remove the right classes
             $theEl.removeClass("unknown");
-            $theEl.addClass("mine");
+            $theEl.addClass("mine"); // why it does not work?
 
             //sound effect: Explosion
             this.MineExplosion();
@@ -195,31 +197,102 @@ export default class Game {
             return;
         }
         //ADD hasAdjacent method
+
+        const row = $theEl.data("row");
+        const col = $theEl.data("col");
+        if(row > MAP_SIZE || col > MAP_SIZE || row < 0 || col < 0)
+            return;
+
         if (selectedSquare.hasAdjacent()) {
             //Are there adjacent mines? if so, show count
             const count = selectedSquare.adjacentMines;
             console.log(count);
             const $innerDiv = $("<div" + selectedSquare.adjacentMines + "</div>");
 
-        }
+            selectedSquare.Revealed();
+            this._SquareReveal(selectedSquare);
+            $theEl.removeClass("unknown");
+            $theEl.addClass(this._SquareReveal(selectedSquare));
+            $theEl.append(`${selectedSquare.adjacentMines}`);
+            return;
+        } else {
 
-        selectedSquare.Revealed();
-        this._SquareReveal(selectedSquare);
-        $theEl.removeClass("unknown");
-        $theEl.addClass(this._SquareReveal(selectedSquare));
-        $theEl.append(`${selectedSquare.adjacentMines}`);
+            this._revealAll(row, col);
+
+
+            // selectedSquare.Revealed();
+            // this._SquareReveal(selectedSquare);
+            // $theEl.removeClass("unknown");
+            // $theEl.addClass(this._SquareReveal(selectedSquare));
+            // $theEl.append(`${selectedSquare.adjacentMines}`);
+
+        }
 
 
         //if no adjacent mines, clear squares until mines are found (adjmines > 0)
         //TODO: DFS to clear
     }
 
+    _revealAll(row, col)
+    {
+        //Flood fill algorithm
+        if (row > MAP_SIZE || row > MAP_SIZE) {
+            return;
+        }
+
+        //Cycle through cells
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                if (row + i <= -1 || row + i >= MAP_SIZE || col + j <= -1 || col + j >= MAP_SIZE) {
+
+                    continue;
+                }
+
+                //Select neighbour square
+                const selectedSquare = this.minefield.squareAt(row + i, col + j);
+                const $theSquare = $(`#square-${row+i}-${col+j}`);
+
+                //Check if cell has not been revealed
+                console.log(selectedSquare);
+                if (!(selectedSquare.isRevealed)) {
+                    //reveal cell's contents
+                    selectedSquare.Revealed();
+
+                    //Removing unknown classes, adding revealed
+                    this._RemoveUnknown($theSquare, selectedSquare);
+
+                    if (selectedSquare.numOfAdjacentMines == 0 && !selectedSquare.hasMine) {
+                        //Keep revealing neighbouring cells by calling the same function (recursion)
+                        this._revealAll(row + i, col + j);
+                    }
+
+                }
+            }
+        }
+
+
+
+        //const selectedSquare = this.minefield.squareAt(row, col);
+    }
+
+
+    _RemoveUnknown($theSquare, selectedSquare) {
+        if(!selectedSquare.Revealed()) {
+            $theSquare.removeClass("unknown");
+            $theSquare.addClass(this._SquareReveal(selectedSquare));
+            $theSquare.append(`${selectedSquare.adjacentMines}`);
+            return;
+        }
+    }
     MineExplosion(){
         this.audioManager.explosion.play();
+        alert("You clicked Bomb! Restart, now!");
+        this.newgame = false;
+        this.run();
     }
 
     _SquareReveal(theSquare) {
-        let classes = "revealed-cell";
+        let classes = "revealed";
         //Square revealed?
         if (theSquare.isRevealed) {
             //Ternary operator value = (Condition ? result_iftrue : result_ifnot);

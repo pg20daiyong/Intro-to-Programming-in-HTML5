@@ -1,3 +1,5 @@
+
+
 td {
     width : 2em;
     height: 2em;
@@ -30,6 +32,9 @@ td {
     #background-image: url('../images/flag.png');
 }
 
+.mine {
+    background: orange;
+}
 
 .testClicked {
     background-color: red;
