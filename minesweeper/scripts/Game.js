@@ -7,6 +7,7 @@ import AudioManager from "./AudioManager.js";
 
 const MAP_SIZE = 12;
 const MINE_COUNT = 10;
+const TIMER = 100;
 
 export default class Game {
 
@@ -22,7 +23,7 @@ export default class Game {
         this.maxRevelaedCount = MAP_SIZE * MAP_SIZE - MINE_COUNT;
         this.finishFlag = false;
 
-        this.setTime = 100;
+        this.setTime = TIMER;
         this.gameOver = false;
         this.audioManager = new AudioManager();
 
@@ -61,11 +62,8 @@ export default class Game {
 
                 const row = $theEl.data("row");
                 const col = $theEl.data("col");
-                console.log('Clicked cell at ' + row + ", " + col);
-                // if(row >= MAP_SIZE || col >= MAP_SIZE)
-                //     return;
+                //console.log('Clicked cell at ' + row + ", " + col);
                 const selectedSquare = this.minefield.squareAt(row, col);
-                // Check if mine is here (Debugging)
 
                 //if isn't revealed
                 if (!(selectedSquare.isRevealed)) {
@@ -89,6 +87,7 @@ export default class Game {
                 //Check the size to remove and add the right classes
                 $theEl.addClass("unknown");
                 $theEl.removeClass("flag");
+                //this.MissionComplete()
                 return;
             } else {
                 $theEl.removeClass("unknown");
@@ -96,6 +95,7 @@ export default class Game {
                 //this.MissionComplete()
                 return;
             }
+            //this.MissionComplete()
 
         });
     }
@@ -125,7 +125,7 @@ export default class Game {
     reset() {
         this.gameOver = false;
         this.score = 0;
-        this.setTime = 100;
+        this.setTime = TIMER;
         //generateTime(timerCount);
         $("#score").html(`${this.score}`);
     }
@@ -146,11 +146,10 @@ export default class Game {
 
         let timer = window.setInterval(() => {
 
-            if(secondCount == 0){
-                window.clearInterval(timer);
-                secondCount = 0;
+            if(this.setTime === 0){
                 alert("TimeOver, You have to restart, now");
                 this.newgame = false;
+                this.reset();
                 this.run();
             }
             //what do we do each second
@@ -293,6 +292,7 @@ export default class Game {
                 }
             }
         }
+        this.MissionComplete()
     }
 
     _RemoveUnknown($theSquare, selectedSquare) {
