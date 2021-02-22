@@ -1,4 +1,48 @@
 
+h1 {
+    text-align: center;
+    justify-content: center;
+    display: block;
+    font-size: 2em;
+    border: 1px solid gray;
+}
+
+
+#game-screen {
+    /*Div containing the board*/
+    display: flex;
+    justify-content: center;
+    padding: 2em;
+    background-size: cover;
+    background-position: center;
+    min-height: 100%;
+    width: 100%;
+}
+
+.navi-bar {
+    /*Eliminate the bullets of the unordered list*/
+    list-style: none;
+    margin: 100px;
+    background-color: Gray;
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 100%;
+    border: 2px solid navy;
+}
+
+
+/*target the element "li" inside the class "navi-bar"*/
+
+.navi-bar>li {
+    margin: 2em;
+    padding: 0.5em;
+    flex-grow: 1;
+    font-size: 3vh;
+    border: 2px solid gray;
+    text-align: center;
+    background: lightgray;
+}
+
 
 td {
     width : 2em;
@@ -6,6 +50,10 @@ td {
     background-color: gray;
     border: 1px solid white;
     margin:  1px;
+}
+.revealed{
+    background-color: greenyellow;
+    box-shadow: 2px 2px inset rgb(50,148,4);
 }
 
 .button {
@@ -38,4 +86,12 @@ td {
 
 .testClicked {
     background-color: red;
+}
+
+#timer{
+    border: 1px solid black;
+}
+
+#score{
+    border: 1px solid black;
 }

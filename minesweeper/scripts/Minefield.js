@@ -43,6 +43,7 @@ export default class Minefield{
         // TODO : for each mine, randomize row, col
         // TODO : place mine at row, column, unless mine already there
 
+        console.log("mineCount = ", mineCount)
         let checkCount = 0;
         while(mineCount !== checkCount){
             let i = Math.floor(Math.random() * (this.size-1)) //randomize coordinates i
@@ -59,6 +60,26 @@ export default class Minefield{
     }
 
     _countAdjacent(){
+
+        // TODO : DEBUG and MODIFY This
+        // for(let row = 0; row < this.size; row++) {
+        //     for(let col = 0 ; col < this.size; col++){
+        //         let count = 0;
+        //         for(let i = -1; i<= 1; i++){
+        //             for(let j = -1; j<= 1; j++){
+        //                 //boundary check?
+        //                 if(i == 0 || j == 0){
+        //                     continue;
+        //                 }
+        //                 //console.log(this.field[row + i][col + i])
+        //                 if(col+i >= 0 && row+j >= 0 && col+i < this.size && row < this.size) {
+        //                     if (this.field[row + i][col + i]._hasMine === true) count++
+        //                 }
+        //             }
+        //         }
+        //         this.field[0][0].adjacentMines = count
+        //     }
+        // }
         // TODO : walk through field, for each square count adjacent
         // Left Top Corner
         let count = 0
@@ -161,5 +182,29 @@ export default class Minefield{
         }
 
         console.log(this.field)
+    }
+
+    checkFlaggedCount() {
+
+        let col = this.size;
+        let row = this.size;
+        let checkedMines = 0;
+
+
+        for (let i = 0; i < col; i++) {
+
+            for (let j = 0; j < row; j++) {
+                //select the square
+                const checkedSquare = this.squareAt(i, j);
+                if (checkedSquare.hasMine && checkedSquare.Flagged) {
+                    checkedMines++;
+                    //Debug message
+                    console.log( "Number of checkedMines mines : ", checkedMines);
+                    //End of debug message
+                }
+            }
+        }
+
+        return checkedMines;
     }
 }

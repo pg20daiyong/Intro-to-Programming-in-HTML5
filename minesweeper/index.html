@@ -5,31 +5,42 @@
         <title>Minesweeper</title>
         <link rel="stylesheet" type="text/css" href="./css/style.css">
         <link rel="stylesheet" type="text/css" href="./css/style_base.css">
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=">
         <!-- Scripts here are external libs -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type="text/javascript" src="scripts/libs/buzz.min.js"></script>
     </head>
-    <body> 
+    <body>
+        <div id="body-title"> <h1>Minesweeper</h1> </div>
         <section id="app-wrapper">
-            <section id="rewards-screen">
-                <!-- Kewards, win loss, play again-->
+<!--            <section id="rewards-screen">-->
+<!--                &lt;!&ndash; Kewards, win loss, play again&ndash;&gt;-->
 
-            </section>
-            <section id="game-screen" class="hide">
+<!--            </section>-->
+            <section id="game-screen">
                 <!-- The actual game -->
                 <!-- Auto generated in script -->
             </section>
-
-            <section id="splash-screen">
-                <!-- intro splash and play button -->
-                <div id="main-splash-image"></div>
-                <div id="play-now-btn"></div>
-
-                <div id="restart-button" class="button">Reset</div>
-
-                <div id="demo">Test Area</div>
-            </section>
         </section>
+        <nav>
+            <ul class="navi-bar">
+                <li id="restart-flags">
+                    <div id="restart-button" class="button">Reset</div>
+                </li>
+
+                <li class="nav-time">
+                    <!--Timer-->
+                    Time:
+                    <div id="timer"></div>
+                </li>
+
+                <li class="nav-score">
+                    <!--Score-->
+                    Score:
+                    <div id="score">0</div>
+                </li>
+            </ul>
+        </nav>
 
         <script type="module" src="scripts/index.js"></script>
 <!--        <script type="text/javascript" src="scripts/index.js"></script>-->

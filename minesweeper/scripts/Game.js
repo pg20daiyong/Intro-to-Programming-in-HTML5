@@ -6,7 +6,7 @@ import AudioManager from "./AudioManager.js";
 
 
 const MAP_SIZE = 12;
-const MINE_COUNT = 20;
+const MINE_COUNT = 10;
 
 export default class Game {
 
@@ -14,16 +14,20 @@ export default class Game {
         // Create a game
         this.board = {
             size: size,
+            timerCount : 10000
         };
-        this.minefield = new Minefield(size, MAP_SIZE);
+        this.minefield = new Minefield(MINE_COUNT, MAP_SIZE);
         this.mineCount = MINE_COUNT;
+        this.score = 0;
+        this.revealedCount = 0;
+        this.maxRevelaedCount = MAP_SIZE * MAP_SIZE - MINE_COUNT;
+        this.finishFlag = false;
 
         this.gameOver = false;
-
         this.audioManager = new AudioManager();
 
 
-        this.message = "Welcome to Minesweeper";
+        //this.message = "Welcome to Minesweeper";
         let self = this;
         //$("#restart-button").on('click', event => this.someLonghandler(event));
         document.querySelector("#restart-button")
@@ -71,6 +75,7 @@ export default class Game {
             }
 
 
+            //this.MissionComplete();
         });
         //right Click
         $(".square").on("contextmenu", event => {
@@ -79,6 +84,7 @@ export default class Game {
             const $theEl = $(event.target);
             const id = $theEl.attr("id");
 
+            //this.MissionComplete();
             if (this.CheckFlag($theEl)) {
                 //Check the size to remove and add the right classes
 
@@ -88,6 +94,7 @@ export default class Game {
             } else {
                 $theEl.removeClass("unknown");
                 $theEl.addClass("flag");
+                this.MissionComplete()
                 return;
             }
 
@@ -108,12 +115,21 @@ export default class Game {
     // }
     someLonghandler(event){
         //$("demo").html(this.message)
-        document.querySelector('#demo')
-            .innerHTML = this.message;
+        // document.querySelector('#demo')
+        //     .innerHTML = this.message;
         //Flag for restart or new game
         //console.log("someLonghandler")
-        this.newgame = true;
+
+
+        //this.gameOver = false;
         this.run();
+    }
+    reset() {
+        this.gameOver = false;
+        this.score = 0;
+
+        //generateTime(timerCount);
+        $("#score").html(`${this.score}`);
     }
     run() {
 
@@ -122,15 +138,35 @@ export default class Game {
         //     this.update();
         //     this.render();
         // }
-        this.gameOver = false;
-        this.render()
-
+        this.reset();
+        this.render();
+        this.startTimer();
     }
 
+    startTimer() {
+        let secondCount = this.board.timerCount;
+
+        let timer = window.setInterval(() => {
+
+            if(secondCount == 0){
+                window.clearInterval(timer);
+                secondCount = 0;
+                alert("TimeOver, You have to restart, now");
+                this.newgame = false;
+                this.run();
+            }
+            //what do we do each second
+            //console.log(this.minefield.checkFlaggedCount())
+            $("#timer").html (secondCount);
+            secondCount--;
+
+        }, 1000);
+    }
+
+
     update() {
-        //this.updateCellHanders();
-        // get user input and update the game simulation
-        this.gameOver = true;
+        //this.MissionComplete();
+        //this.gameOver = true;
     }
 
     render() {
@@ -172,10 +208,6 @@ export default class Game {
         $("#game-screen").html(markup);
     }
 
-    _flag($el)
-    {
-
-    }
     _reveal(selectedSquare, $theEl) {
 
         //Reveal the contents of the cell
@@ -194,6 +226,7 @@ export default class Game {
             //sound effect: Explosion
             this.MineExplosion();
             this.gameOver = true;
+            //this.reset();
             return;
         }
         //ADD hasAdjacent method
@@ -210,71 +243,60 @@ export default class Game {
             const $innerDiv = $("<div" + selectedSquare.adjacentMines + "</div>");
 
             selectedSquare.Revealed();
+            this.revealedCount++
             this._SquareReveal(selectedSquare);
             $theEl.removeClass("unknown");
             $theEl.addClass(this._SquareReveal(selectedSquare));
             $theEl.append(`${selectedSquare.adjacentMines}`);
+
+            this.score++;
+            $("#score").html(`${this.score}`);
+            this.MissionComplete()
             return;
         } else {
 
-            this._revealAll(row, col);
+            //TODO: Search 8 Directions
 
-
-            // selectedSquare.Revealed();
-            // this._SquareReveal(selectedSquare);
-            // $theEl.removeClass("unknown");
-            // $theEl.addClass(this._SquareReveal(selectedSquare));
-            // $theEl.append(`${selectedSquare.adjacentMines}`);
-
+            this._revealAllZeros(row, col);
         }
 
-
-        //if no adjacent mines, clear squares until mines are found (adjmines > 0)
-        //TODO: DFS to clear
     }
 
-    _revealAll(row, col)
+    _revealAllZeros(row, col)
     {
         //Flood fill algorithm
         if (row > MAP_SIZE || row > MAP_SIZE) {
             return;
         }
 
-        //Cycle through cells
+        //check all directions
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
                 if (row + i <= -1 || row + i >= MAP_SIZE || col + j <= -1 || col + j >= MAP_SIZE) {
-
+                    // boundary check
                     continue;
                 }
 
-                //Select neighbour square
+                //Select neighbour squares
                 const selectedSquare = this.minefield.squareAt(row + i, col + j);
                 const $theSquare = $(`#square-${row+i}-${col+j}`);
 
                 //Check if cell has not been revealed
                 console.log(selectedSquare);
                 if (!(selectedSquare.isRevealed)) {
-                    //reveal cell's contents
                     selectedSquare.Revealed();
-
-                    //Removing unknown classes, adding revealed
+                    this.revealedCount++;
+                    //Remove unknown classes, add revealed
                     this._RemoveUnknown($theSquare, selectedSquare);
 
                     if (selectedSquare.numOfAdjacentMines == 0 && !selectedSquare.hasMine) {
-                        //Keep revealing neighbouring cells by calling the same function (recursion)
-                        this._revealAll(row + i, col + j);
+                        this._revealAllZeros(row + i, col + j);
                     }
-
+                    this.MissionComplete()
                 }
             }
         }
-
-
-
-        //const selectedSquare = this.minefield.squareAt(row, col);
     }
-
 
     _RemoveUnknown($theSquare, selectedSquare) {
         if(!selectedSquare.Revealed()) {
@@ -284,6 +306,16 @@ export default class Game {
             return;
         }
     }
+
+    MissionComplete() {
+        console.log("checkFlaggedCount ", this.minefield.checkFlaggedCount())
+
+        if (this.minefield.checkFlaggedCount() === MINE_COUNT) {
+            this.finishFlag = true;
+            console.log("Mission Complete");
+        }
+    }
+
     MineExplosion(){
         this.audioManager.explosion.play();
         alert("You clicked Bomb! Restart, now!");
@@ -343,4 +375,5 @@ export default class Game {
             inner
         }
     }
+
 }
