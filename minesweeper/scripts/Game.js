@@ -14,7 +14,6 @@ export default class Game {
         // Create a game
         this.board = {
             size: size,
-            timerCount : 10000
         };
         this.minefield = new Minefield(MINE_COUNT, MAP_SIZE);
         this.mineCount = MINE_COUNT;
@@ -23,6 +22,7 @@ export default class Game {
         this.maxRevelaedCount = MAP_SIZE * MAP_SIZE - MINE_COUNT;
         this.finishFlag = false;
 
+        this.setTime = 100;
         this.gameOver = false;
         this.audioManager = new AudioManager();
 
@@ -87,14 +87,13 @@ export default class Game {
             //this.MissionComplete();
             if (this.CheckFlag($theEl)) {
                 //Check the size to remove and add the right classes
-
                 $theEl.addClass("unknown");
                 $theEl.removeClass("flag");
                 return;
             } else {
                 $theEl.removeClass("unknown");
                 $theEl.addClass("flag");
-                this.MissionComplete()
+                //this.MissionComplete()
                 return;
             }
 
@@ -120,14 +119,13 @@ export default class Game {
         //Flag for restart or new game
         //console.log("someLonghandler")
 
-
-        //this.gameOver = false;
+        this.reset();
         this.run();
     }
     reset() {
         this.gameOver = false;
         this.score = 0;
-
+        this.setTime = 100;
         //generateTime(timerCount);
         $("#score").html(`${this.score}`);
     }
@@ -138,13 +136,13 @@ export default class Game {
         //     this.update();
         //     this.render();
         // }
-        this.reset();
+
         this.render();
         this.startTimer();
     }
 
     startTimer() {
-        let secondCount = this.board.timerCount;
+        let secondCount = this.setTime;
 
         let timer = window.setInterval(() => {
 
@@ -157,8 +155,8 @@ export default class Game {
             }
             //what do we do each second
             //console.log(this.minefield.checkFlaggedCount())
-            $("#timer").html (secondCount);
-            secondCount--;
+            $("#timer").html (this.setTime);
+            this.setTime--;
 
         }, 1000);
     }
@@ -211,9 +209,6 @@ export default class Game {
     _reveal(selectedSquare, $theEl) {
 
         //Reveal the contents of the cell
-        // const row =;
-        // const col = ;
-        // const sq = this.minefield.squareAt()
         //Get the square corresponding to this element
         // TODO : If no mine are there adjacent mines? is so show the count
         // TODO : Else clear all
@@ -258,6 +253,8 @@ export default class Game {
             //TODO: Search 8 Directions
 
             this._revealAllZeros(row, col);
+            console.log(this.minefield.checkFlaggedCount())
+            this.MissionComplete()
         }
 
     }
@@ -282,7 +279,7 @@ export default class Game {
                 const $theSquare = $(`#square-${row+i}-${col+j}`);
 
                 //Check if cell has not been revealed
-                console.log(selectedSquare);
+                //console.log(selectedSquare);
                 if (!(selectedSquare.isRevealed)) {
                     selectedSquare.Revealed();
                     this.revealedCount++;
@@ -292,7 +289,7 @@ export default class Game {
                     if (selectedSquare.numOfAdjacentMines == 0 && !selectedSquare.hasMine) {
                         this._revealAllZeros(row + i, col + j);
                     }
-                    this.MissionComplete()
+                    //this.MissionComplete()
                 }
             }
         }
